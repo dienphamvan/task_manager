@@ -32,10 +32,20 @@ export default function SignupForm() {
 
     const onSubmit = async (values: z.infer<typeof signupSchema>) => {
         try {
-            await supabase.auth.signUp({
+            const res = await supabase.auth.signUp({
                 email: values.email,
                 password: values.password,
             })
+
+            if (res.data.user?.identities?.length === 0) {
+                throw new Error('User already exists')
+            }
+
+            if (res.error) {
+                throw res.error
+            }
+
+            form.reset()
 
             showModal(
                 ModalType.Success,
@@ -44,7 +54,9 @@ export default function SignupForm() {
         } catch (error: any) {
             showModal(
                 ModalType.Error,
-                error?.error_description || error?.message
+                error?.error_description ||
+                    error?.message ||
+                    JSON.stringify(error)
             )
         }
     }
@@ -54,7 +66,7 @@ export default function SignupForm() {
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className='space-y-4 p-4 max-w-1/4 w-full mx-auto border rounded-lg'
+                    className='space-y-4 p-4 md:max-w-1/3 w-full mx-auto border rounded-lg'
                 >
                     <h2 className='text-lg font-semibold'>Sign Up</h2>
 
@@ -96,7 +108,7 @@ export default function SignupForm() {
                     />
 
                     {/* Submit Button */}
-                    <Button type='submit' className='w-full cursor-pointer'>
+                    <Button type='submit' className='w-full'>
                         Sign Up
                     </Button>
                 </form>
