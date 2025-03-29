@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { supabase } from '@/lib/initSupabase'
+import { supabase } from '@/lib/supabase/initSupabase'
 import { ModalType, useModal } from '@/hooks/useModal'
 import { Modal } from './Modal'
 
